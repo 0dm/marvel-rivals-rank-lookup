@@ -123,9 +123,9 @@
         .tier {
             display: flex;
             align-items: center;
-            margin-bottom: 16px;
+            margin-bottom: 8px;
             background-color: #252525;
-            padding: 15px;
+            padding: 8px;
             border-radius: 8px;
             transition: transform 0.2s ease;
             box-shadow: 0 2px 4px rgba(0, 0, 0, 0.2);
@@ -140,9 +140,38 @@
         }
 
         .tier img {
-            width: 42px;
-            height: auto;
-            margin-right: 15px;
+            width: 40x;
+            height: 40px;
+            border-radius: 50%;
+            margin-right: 8px;
+            object-fit: cover;
+        }
+
+        .tier div {
+            display: flex;
+            flex-direction: column;
+            flex-grow: 1;
+        }
+
+        .tier strong {
+            font-size: 1em;
+            color: var(--heading-color);
+        }
+
+        .tier span {
+            font-size: 0.85em;
+            color: #aaa;
+        }
+
+        .tier .stat-row {
+            display: flex;
+            justify-content: space-between;
+            margin-top: 3px;
+        }
+
+        .tier .stat-row span {
+            font-size: 0.8em;
+            color: #ccc;
         }
 
         .stats-heroes-container {
@@ -157,7 +186,7 @@
         }
 
         .scrollable-heroes {
-            max-height: 400px;
+            max-height: 280px;
             overflow-y: auto;
             padding-right: 5px;
             scrollbar-width: thin;
@@ -738,6 +767,15 @@
                                 const matchesWon = hero.stats?.matchesWon?.value || 0;
                                 const winRate = hero.stats?.matchesWinPct?.displayValue || 
                                     (matchesPlayed > 0 ? ((matchesWon / matchesPlayed) * 100).toFixed(1) + '%' : '--');
+                                const kdaRatio = hero.stats?.kdaRatio?.value || 0;
+                                let kdaColor = '#aaa'; // Default grey
+                                if (kdaRatio >= 3.0 && kdaRatio < 4.0) {
+                                    kdaColor = '#4CAF50'; // Green
+                                } else if (kdaRatio >= 4.0 && kdaRatio < 5.0) {
+                                    kdaColor = '#2196F3'; // Blue
+                                } else if (kdaRatio >= 5.0) {
+                                    kdaColor = '#FF9800'; // Orange
+                                }
                                 
                                 heroCard.style.borderLeft = `4px solid ${heroColor}`;
                                 heroCard.style.paddingLeft = '10px';
@@ -759,6 +797,7 @@
                                             <span>${matchesWon} Wins</span>
                                         </div>
                                     </div>
+                                    <div style="color: ${kdaColor}; font-weight: bold; font-size: 1em; text-align: right;">KDA: ${kdaRatio.toFixed(2)}</div>
                                 `;
                                 
                                 topHeroesContent.appendChild(heroCard);
