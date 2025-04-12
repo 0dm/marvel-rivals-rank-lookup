@@ -10,5 +10,6 @@ it's kinda hacky, it opens an iframe with a bunch of json and you just have to c
 
 demo:
 
-https://github.com/user-attachments/assets/545f993e-adb0-47a9-9113-7494dc99f95f
+https://github.com/user-attachments/assets/2d40a291-6a91-44c2-be90-564fd289836b
+
 
