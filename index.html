@@ -6,7 +6,7 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Marvel Rivals Lookup</title>
     <link rel="icon"
-        href="data:image/svg+xml,<svg xmlns=%22http://www.w3.org/2000/svg%22 viewBox=%220 0 100 100%22><text y=%22.9em%22 font-size=%2290%22>🦸</text></svg>">
+        href="data:image/svg+xml,<svg xmlns=%22http://www.w3.org/2000/svg%22 viewBox=%220 0 100 100%22><text y=%22.9em%22 font-size=%2290%22>🕵️</text></svg>">
     <style>
         :root {
             --background-color: #121212;
@@ -143,6 +143,53 @@
             width: 42px;
             height: auto;
             margin-right: 15px;
+        }
+
+        .stats-heroes-container {
+            display: flex;
+            gap: 20px;
+            margin-bottom: 24px;
+        }
+
+        .stats-heroes-container > div {
+            flex: 1;
+            margin-bottom: 0;
+        }
+
+        .scrollable-heroes {
+            max-height: 400px;
+            overflow-y: auto;
+            padding-right: 5px;
+            scrollbar-width: thin;
+        }
+
+        .stat-box {
+            background-color: #252525;
+            border-radius: 8px;
+            padding: 15px;
+            text-align: center;
+            transition: transform 0.2s ease;
+        }
+        
+        .stat-box:hover {
+            transform: translateY(-2px);
+        }
+        
+        .stat-label {
+            color: #aaa;
+            font-size: 0.9em;
+            margin-bottom: 5px;
+        }
+        
+        .stat-value {
+            font-size: 1.2em;
+            font-weight: bold;
+        }
+
+        @media (max-width: 768px) {
+            .stats-heroes-container {
+                flex-direction: column;
+            }
         }
 
         .loading {
@@ -317,29 +364,42 @@
 
     <div id="errorContainer"></div>
     <div id="results"></div>
-    <div id="playerStats" class="card" style="display: none;">
-        <h2>All-Time Player Stats</h2>
-        <div id="playerStatsContent">
-            <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(150px, 1fr)); gap: 15px;">
-                <div class="stat-box">
-                    <div class="stat-label">Time Played (Competitive)</div>
-                    <div class="stat-value" id="timePlayed">--</div>
-                </div>
-                <div class="stat-box">
-                    <div class="stat-label">Matches Played</div>
-                    <div class="stat-value" id="matchesPlayed">--</div>
-                </div>
-                <div class="stat-box">
-                    <div class="stat-label">Matches Won</div>
-                    <div class="stat-value" id="matchesWon">--</div>
-                </div>
-                <div class="stat-box">
-                    <div class="stat-label">Win Rate</div>
-                    <div class="stat-value" id="winRate">--</div>
+
+    <div class="stats-heroes-container">
+        <div id="playerStats" class="card" style="display: none;">
+            <h2>Player Stats</h2>
+            <div id="lifetimePeakRank" style="margin-bottom: 15px;"></div>
+            <div id="playerStatsContent">
+                <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(150px, 1fr)); gap: 15px;">
+                    <div class="stat-box">
+                        <div class="stat-label">Time Played</div>
+                        <div class="stat-value" id="timePlayed">--</div>
+                    </div>
+                    <div class="stat-box">
+                        <div class="stat-label">Matches Played</div>
+                        <div class="stat-value" id="matchesPlayed">--</div>
+                    </div>
+                    <div class="stat-box">
+                        <div class="stat-label">Matches Won</div>
+                        <div class="stat-value" id="matchesWon">--</div>
+                    </div>
+                    <div class="stat-box">
+                        <div class="stat-label">Win Rate</div>
+                        <div class="stat-value" id="winRate">--</div>
+                    </div>
                 </div>
             </div>
         </div>
+        
+        <div id="topHeroes" class="card" style="display: none;">
+            <h2>Most Played Heroes</h2>
+            <div id="topHeroesContent" class="scrollable-heroes" style="display: flex; flex-direction: column; gap: 10px;"></div>
+            <div id="showMoreHeroesContainer" style="text-align: center; margin-top: 10px; display: none;">
+                <button id="showMoreHeroes" class="toggle-btn">Show More Heroes</button>
+            </div>
+        </div>
     </div>
+    
     <div id="peakTiers" class="card" style="display: none;">
         <h2>Peak Tiers</h2>
         <div id="peakTiersContent"></div>
@@ -348,6 +408,7 @@
         <h2>Lifetime Peak Rank</h2>
         <div id="lifetimePeakContent"></div>
     </div>
+
     <div id="rawDataContainer" class="card" style="display: none;">
         <div style="display: flex; justify-content: space-between; align-items: center;">
             <h3>Raw Data</h3>
@@ -574,7 +635,6 @@
                 loadingDiv.style.display = 'none';
 
                 try {
-                    // Check for private profile error
                     if (data.errors && data.errors.some(err => err.code === "CollectorResultStatus::Private")) {
                         resultsDiv.innerHTML = `
                 <div class="card">
@@ -583,13 +643,11 @@
                 </div>
             `;
 
-                        // Still show raw data section
                         rawDataContent.textContent = JSON.stringify(data, null, 2);
                         rawDataContainer.style.display = 'block';
                         return;
                     }
 
-                    // Check for player not found error
                     if (data.errors && data.errors.some(err => err.code === "CollectorResultStatus::NotFound")) {
                         resultsDiv.innerHTML = `
                 <div class="card">
@@ -598,7 +656,6 @@
                 </div>
             `;
 
-                        // Still show raw data section
                         rawDataContent.textContent = JSON.stringify(data, null, 2);
                         rawDataContainer.style.display = 'block';
                         return;
@@ -608,37 +665,34 @@
                         throw new Error('Player not found or no competitive data available');
                     }
 
-                    // Extract player stats
                     const playerStats = document.getElementById('playerStats');
                     const timePlayedEl = document.getElementById('timePlayed');
                     const matchesPlayedEl = document.getElementById('matchesPlayed');
                     const matchesWonEl = document.getElementById('matchesWon');
                     const winRateEl = document.getElementById('winRate');
+                    const topHeroesDiv = document.getElementById('topHeroes');
+                    const topHeroesContent = document.getElementById('topHeroesContent');
+                    const showMoreHeroesContainer = document.getElementById('showMoreHeroesContainer');
+                    const showMoreHeroesBtn = document.getElementById('showMoreHeroes');
 
-                    // Parse stats from data
                     if (data.data[0] && data.data[0].stats) {
                         const stats = data.data[0].stats;
                         
-                        // Time played
                         if (stats.timePlayed) {
                             timePlayedEl.textContent = stats.timePlayed.displayValue || '--';
                         }
                         
-                        // Matches played
                         if (stats.matchesPlayed) {
                             matchesPlayedEl.textContent = stats.matchesPlayed.value || '--';
                         }
                         
-                        // Matches won
                         if (stats.matchesWon) {
                             matchesWonEl.textContent = stats.matchesWon.value || '--';
                         }
                         
-                        // Win percentage
                         if (stats.matchesWinPct) {
                             winRateEl.textContent = stats.matchesWinPct.displayValue || '--';
                         } else if (stats.matchesPlayed && stats.matchesPlayed.value > 0 && stats.matchesWon) {
-                            // Calculate win rate if not provided directly
                             const winRate = ((stats.matchesWon.value / stats.matchesPlayed.value) * 100).toFixed(1);
                             winRateEl.textContent = `${winRate}%`;
                         }
@@ -646,8 +700,102 @@
                         playerStats.style.display = 'block';
                     }
 
+                    if (data.data && Array.isArray(data.data)) {
+                        const heroData = data.data.filter(item => item.type === 'hero' && item.attributes?.mode === 'competitive');
+                        
+                        heroData.sort((a, b) => {
+                            const aPlaytime = a.stats?.timePlayed?.value || 0;
+                            const bPlaytime = b.stats?.timePlayed?.value || 0;
+                            return bPlaytime - aPlaytime;
+                        });
+
+                        let heroesShown = 0;
+                        const heroesPerPage = 3;
+                        
+                        function renderHeroCards(startIndex, count) {
+                            const endIndex = Math.min(startIndex + count, heroData.length);
+                            
+                            for (let i = startIndex; i < endIndex; i++) {
+                                const hero = heroData[i];
+                                const heroCard = document.createElement('div');
+                                heroCard.className = 'tier';
+                                
+                                const heroName = hero.metadata?.name || 'Unknown Hero';
+                                const heroImage = hero.metadata?.imageUrl || '';
+                                const heroColor = hero.metadata?.color || '#72AE66';
+                                const heroRole = hero.metadata?.roleName || '';
+                                
+                                const timePlayed = hero.stats?.timePlayed?.displayValue || '--';
+                                const matchesPlayed = hero.stats?.matchesPlayed?.value || 0;
+                                const matchesWon = hero.stats?.matchesWon?.value || 0;
+                                const winRate = hero.stats?.matchesWinPct?.displayValue || 
+                                    (matchesPlayed > 0 ? ((matchesWon / matchesPlayed) * 100).toFixed(1) + '%' : '--');
+                                
+                                heroCard.style.borderLeft = `4px solid ${heroColor}`;
+                                heroCard.style.paddingLeft = '10px';
+                                
+                                heroCard.innerHTML = `
+                                    <img src="${heroImage}" alt="${heroName}" loading="lazy" 
+                                        onerror="this.src='data:image/svg+xml,<svg xmlns=%22http://www.w3.org/2000/svg%22 viewBox=%220 0 100 100%22><text y=%22.9em%22 font-size=%2270%22>🦸</text></svg>'">
+                                    <div style="display: flex; flex-direction: column; flex-grow: 1;">
+                                        <div style="display: flex; justify-content: space-between; align-items: center;">
+                                            <strong>${heroName}</strong>
+                                            <span style="color: #ccc; font-size: 0.9em;">${heroRole}</span>
+                                        </div>
+                                        <div style="display: flex; justify-content: space-between; margin-top: 5px;">
+                                            <span>Time Played: ${timePlayed}</span>
+                                            <span>Win Rate: ${winRate}</span>
+                                        </div>
+                                        <div style="display: flex; justify-content: space-between; margin-top: 5px; color: #aaa; font-size: 0.9em;">
+                                            <span>${matchesPlayed} Matches</span>
+                                            <span>${matchesWon} Wins</span>
+                                        </div>
+                                    </div>
+                                `;
+                                
+                                topHeroesContent.appendChild(heroCard);
+                            }
+                            
+                            return endIndex;
+                        }
+                        
+                        if (heroData.length > 0) {
+                            topHeroesContent.innerHTML = '';
+                            heroesShown = renderHeroCards(0, heroesPerPage);
+                            topHeroesDiv.style.display = 'block';
+                        }
+
+                        if (heroData.length > heroesShown) {
+                            showMoreHeroesContainer.style.display = 'block';
+                            
+                            const newShowMoreBtn = showMoreHeroesBtn.cloneNode(true);
+                            showMoreHeroesBtn.parentNode.replaceChild(newShowMoreBtn, showMoreHeroesBtn);
+                            
+                            newShowMoreBtn.addEventListener('click', function() {
+                                heroesShown = renderHeroCards(heroesShown, heroesPerPage);
+                                
+                                if (heroesShown >= heroData.length) {
+                                    showMoreHeroesContainer.style.display = 'none';
+                                }
+                            });
+                        } else {
+                            showMoreHeroesContainer.style.display = 'none';
+                        }
+                    }
+
                     const peakTiers = data.data["1"].stats.peakTiers.value;
                     const lifetimePeak = data.data["1"].stats.lifetimePeakRanked;
+
+                    document.getElementById('lifetimePeakRank').innerHTML = `
+                        <div class="tier" style="border-left: 4px solid ${lifetimePeak.metadata.color || '#ccc'}; padding-left: 10px; margin-bottom: 0;">
+                            <img src="${lifetimePeak.metadata.iconUrl}" alt="${lifetimePeak.metadata.tierName}" loading="lazy" onerror="this.src='data:image/svg+xml,<svg xmlns=%22http://www.w3.org/2000/svg%22 viewBox=%220 0 100 100%22><text y=%22.9em%22 font-size=%2270%22>🏆</text></svg>'">
+                            <div>
+                                <strong>${lifetimePeak.displayName}</strong><br>
+                                ${lifetimePeak.metadata.tierName} (${lifetimePeak.metadata.tierShortName})<br>
+                                Rating: ${lifetimePeak.displayValue}
+                            </div>
+                        </div>
+                    `;
 
                     let peakTiersHtml = '';
                     peakTiers.forEach(peak => {
@@ -664,18 +812,8 @@
                     });
                     document.getElementById('peakTiersContent').innerHTML = peakTiersHtml;
                     peakTiersDiv.style.display = 'block';
-
-                    document.getElementById('lifetimePeakContent').innerHTML = `
-            <div class="tier" style="border-left: 4px solid ${lifetimePeak.metadata.color || '#ccc'}; padding-left: 10px;">
-                <img src="${lifetimePeak.metadata.iconUrl}" alt="${lifetimePeak.metadata.tierName}" loading="lazy" onerror="this.src='data:image/svg+xml,<svg xmlns=%22http://www.w3.org/2000/svg%22 viewBox=%220 0 100 100%22><text y=%22.9em%22 font-size=%2270%22>🏆</text></svg>'">
-                <div>
-                    <strong>${lifetimePeak.displayName}</strong><br>
-                    ${lifetimePeak.metadata.tierName} (${lifetimePeak.metadata.tierShortName})<br>
-                    Rating: ${lifetimePeak.displayValue}
-                </div>
-            </div>
-        `;
-                    lifetimePeakDiv.style.display = 'block';
+                    
+                    lifetimePeakDiv.style.display = 'none';
 
                     rawDataContent.textContent = JSON.stringify(data, null, 2);
                     rawDataContainer.style.display = 'block';
