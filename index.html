@@ -445,6 +445,22 @@
                     } catch (e) { }
 
                     iframe.focus();
+                    const focusIndicator = document.createElement('div');
+                    focusIndicator.style.cssText = 'position:absolute; top:0; left:0; width:100%; height:100%; border:3px solid #4CAF50; border-radius:8px; pointer-events:none; animation:pulse 1.5s infinite alternate;';
+                    iframeContainer.appendChild(focusIndicator);
+                    
+                    const styleSheet = document.createElement('style');
+                    styleSheet.textContent = '@keyframes pulse {0% {opacity:0.3;} 100% {opacity:0.8;}}';
+                    document.head.appendChild(styleSheet);
+                    
+                    const processBtn = document.getElementById('readClipboardBtn');
+                    processBtn.disabled = false;
+                    processBtn.style.opacity = '1';
+                    
+                    const statusText = document.createElement('div');
+                    statusText.style.cssText = 'position:absolute; bottom:-30px; left:0; width:100%; text-align:center; color:#4CAF50; font-weight:bold;';
+                    statusText.textContent = 'Data loaded! Click inside and press Ctrl+A, Ctrl+C';
+                    iframeContainer.appendChild(statusText);
                 };
 
                 document.getElementById('readClipboardBtn').addEventListener('click', async function () {
