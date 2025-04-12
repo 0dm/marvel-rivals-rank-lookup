@@ -643,6 +643,10 @@
                 </div>
             `;
 
+                        document.getElementById('playerStats').style.display = 'none';
+                        document.getElementById('topHeroes').style.display = 'none';
+                        document.getElementById('peakTiers').style.display = 'none';
+
                         rawDataContent.textContent = JSON.stringify(data, null, 2);
                         rawDataContainer.style.display = 'block';
                         return;
@@ -655,6 +659,10 @@
                     <p>We couldn't find a player with this name. Please check the spelling and try again.</p>
                 </div>
             `;
+
+                        document.getElementById('playerStats').style.display = 'none';
+                        document.getElementById('topHeroes').style.display = 'none';
+                        document.getElementById('peakTiers').style.display = 'none';
 
                         rawDataContent.textContent = JSON.stringify(data, null, 2);
                         rawDataContainer.style.display = 'block';
