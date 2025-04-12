@@ -3,7 +3,7 @@
 
 this page lets you lookup player rank history for marvel rivals (really meant for PC but might work on console).
 
-all data is from [tracker.gg](https://tracker.gg/)
+all data is from [tracker.gg](https://tracker.gg/). if you're from tracker.gg's team and see this, please approve my api key and i'll stop doing this
 
 it's kinda hacky, it opens an iframe with a bunch of json and you just have to ctrl + a and click process to paste. it's pretty quick though
 
