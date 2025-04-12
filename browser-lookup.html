@@ -1,0 +1,681 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Marvel Rivals Lookup</title>
+    <link rel="icon"
+        href="data:image/svg+xml,<svg xmlns=%22http://www.w3.org/2000/svg%22 viewBox=%220 0 100 100%22><text y=%22.9em%22 font-size=%2290%22>🦸</text></svg>">
+    <style>
+        :root {
+            --background-color: #121212;
+            --card-background: #1e1e1e;
+            --input-background: #2d2d2d;
+            --border-color: #333;
+            --text-color: #e0e0e0;
+            --heading-color: #f0f0f0;
+            --primary-color: #2196F3;
+            --primary-hover: #0b7dda;
+            --success-color: #4CAF50;
+            --warning-color: #FF9800;
+            --error-color: #f44336;
+        }
+
+        * {
+            box-sizing: border-box;
+            margin: 0;
+            padding: 0;
+        }
+
+        body {
+            font-family: 'Segoe UI', Arial, sans-serif;
+            max-width: 800px;
+            margin: 0 auto;
+            padding: 20px;
+            line-height: 1.6;
+            background-color: var(--background-color);
+            color: var(--text-color);
+        }
+
+        h1,
+        h2,
+        h3 {
+            color: var(--heading-color);
+            margin-bottom: 16px;
+        }
+
+        h1 {
+            text-align: center;
+            margin-bottom: 24px;
+            font-size: 2.2rem;
+            text-shadow: 0 2px 4px rgba(0, 0, 0, 0.3);
+        }
+
+        .card {
+            border: 1px solid var(--border-color);
+            border-radius: 8px;
+            padding: 20px;
+            margin-bottom: 24px;
+            box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2);
+            background-color: var(--card-background);
+            transition: transform 0.2s ease;
+        }
+
+        .card:hover {
+            transform: translateY(-2px);
+        }
+
+        .input-group {
+            margin-bottom: 24px;
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            justify-content: center;
+        }
+
+        input {
+            padding: 10px 16px;
+            width: 250px;
+            border: 1px solid var(--border-color);
+            border-radius: 4px;
+            background-color: var(--input-background);
+            color: var(--text-color);
+            font-size: 16px;
+            transition: all 0.2s ease;
+        }
+
+        input:focus {
+            outline: none;
+            border-color: var(--primary-color);
+            box-shadow: 0 0 0 2px rgba(33, 150, 243, 0.3);
+        }
+
+        button {
+            padding: 10px 20px;
+            background-color: var(--primary-color);
+            color: white;
+            border: none;
+            border-radius: 4px;
+            cursor: pointer;
+            font-size: 16px;
+            transition: all 0.2s ease;
+        }
+
+        button:hover {
+            background-color: var(--primary-hover);
+            transform: translateY(-1px);
+        }
+
+        button:active {
+            transform: translateY(1px);
+        }
+
+        pre {
+            background-color: var(--input-background);
+            padding: 15px;
+            overflow-x: auto;
+            border-radius: 4px;
+            color: var(--text-color);
+            white-space: pre-wrap;
+        }
+
+        .tier {
+            display: flex;
+            align-items: center;
+            margin-bottom: 16px;
+            background-color: #252525;
+            padding: 15px;
+            border-radius: 8px;
+            transition: transform 0.2s ease;
+            box-shadow: 0 2px 4px rgba(0, 0, 0, 0.2);
+        }
+
+        .tier:hover {
+            transform: translateY(-2px);
+        }
+
+        .tier:last-child {
+            margin-bottom: 0;
+        }
+
+        .tier img {
+            width: 42px;
+            height: auto;
+            margin-right: 15px;
+        }
+
+        .loading {
+            display: none;
+            margin: 24px 0;
+            color: var(--heading-color);
+            text-align: center;
+        }
+
+        .loading-spinner {
+            display: inline-block;
+            width: 30px;
+            height: 30px;
+            border: 3px solid rgba(255, 255, 255, 0.3);
+            border-radius: 50%;
+            border-top-color: var(--primary-color);
+            animation: spin 1s ease-in-out infinite;
+            margin-bottom: 10px;
+        }
+
+        textarea {
+            background-color: var(--input-background);
+            color: var(--text-color);
+            border: 1px solid var(--border-color);
+            width: 100%;
+            resize: vertical;
+        }
+
+        ::-webkit-scrollbar {
+            width: 10px;
+            height: 10px;
+        }
+
+        ::-webkit-scrollbar-track {
+            background: var(--card-background);
+        }
+
+        ::-webkit-scrollbar-thumb {
+            background: #555;
+            border-radius: 5px;
+        }
+
+        ::-webkit-scrollbar-thumb:hover {
+            background: #777;
+        }
+
+        @keyframes spin {
+            0% {
+                transform: rotate(0deg);
+            }
+
+            100% {
+                transform: rotate(360deg);
+            }
+        }
+
+        .footer {
+            text-align: center;
+            margin-top: 40px;
+            color: #888;
+            font-size: 14px;
+        }
+
+        .toggle-btn {
+            background: transparent;
+            color: #888;
+            border: 1px solid #444;
+            padding: 5px 10px;
+            font-size: 14px;
+            margin-top: 10px;
+        }
+
+        .toggle-btn:hover {
+            background-color: #333;
+            color: #ccc;
+        }
+
+        .history-section {
+            margin-top: 30px;
+        }
+
+        .history-item {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            padding: 8px 12px;
+            background: #252525;
+            margin-bottom: 8px;
+            border-radius: 4px;
+            cursor: pointer;
+            transition: all 0.2s ease;
+        }
+
+        .history-item:hover {
+            background: #333;
+        }
+
+        .error-message {
+            background-color: rgba(244, 67, 54, 0.1);
+            border-left: 4px solid var(--error-color);
+            padding: 15px;
+            margin-bottom: 20px;
+            color: #ff8a80;
+            border-radius: 4px;
+        }
+
+        .tooltip {
+            position: relative;
+            display: inline-block;
+        }
+
+        .tooltip .tooltip-text {
+            visibility: hidden;
+            width: 200px;
+            background-color: #333;
+            color: #fff;
+            text-align: center;
+            border-radius: 6px;
+            padding: 5px;
+            position: absolute;
+            z-index: 1;
+            bottom: 125%;
+            left: 50%;
+            transform: translateX(-50%);
+            opacity: 0;
+            transition: opacity 0.3s;
+        }
+
+        .tooltip:hover .tooltip-text {
+            visibility: visible;
+            opacity: 1;
+        }
+
+        @media (max-width: 600px) {
+            body {
+                padding: 15px;
+            }
+
+            h1 {
+                font-size: 1.8rem;
+            }
+
+            .input-group {
+                flex-direction: column;
+            }
+
+            input {
+                width: 100%;
+            }
+        }
+    </style>
+</head>
+
+<body>
+    <h1>Marvel Rivals Lookup</h1>
+    <div class="card">
+        <p>for when the bronze player is talking shit about your spiderman</p>
+        <p>note: this tool uses <a href="https://tracker.gg/marvel-rivals" target="_blank"
+                style="color: var(--primary-color);">tracker.gg</a> to fetch data. my api key isn't approved so it's kinda scuffed.</p>
+    </div>
+
+    <div class="input-group">
+        <input type="text" id="playerName" placeholder="Enter player IGN" autocomplete="off" list="searchHistory">
+        <datalist id="searchHistory"></datalist>
+        <button id="lookupBtn">Lookup</button>
+    </div>
+
+    <div id="loading" class="loading">
+        <div class="loading-spinner"></div>
+        <div>Loading data...</div>
+    </div>
+
+    <div id="errorContainer"></div>
+    <div id="results"></div>
+    <div id="peakTiers" class="card" style="display: none;">
+        <h2>Peak Tiers</h2>
+        <div id="peakTiersContent"></div>
+    </div>
+    <div id="lifetimePeak" class="card" style="display: none;">
+        <h2>Lifetime Peak Rank</h2>
+        <div id="lifetimePeakContent"></div>
+    </div>
+    <div id="rawDataContainer" class="card" style="display: none;">
+        <div style="display: flex; justify-content: space-between; align-items: center;">
+            <h3>Raw Data</h3>
+            <button id="toggleRawData" class="toggle-btn">Show</button>
+        </div>
+        <div id="rawData" style="display: none;">
+            <pre id="rawDataContent"></pre>
+        </div>
+    </div>
+
+    <div id="searchHistorySection" class="card history-section" style="display: none;">
+        <div style="display: flex; justify-content: space-between; align-items: center;">
+            <h3>Search History</h3>
+            <button id="clearHistory" class="toggle-btn">Clear</button>
+        </div>
+        <div id="historyList"></div>
+    </div>
+
+    <script>
+        document.addEventListener('DOMContentLoaded', function () {
+            const playerNameInput = document.getElementById('playerName');
+            const lookupBtn = document.getElementById('lookupBtn');
+            const loadingDiv = document.getElementById('loading');
+            const resultsDiv = document.getElementById('results');
+            const peakTiersDiv = document.getElementById('peakTiers');
+            const lifetimePeakDiv = document.getElementById('lifetimePeak');
+            const rawDataContainer = document.getElementById('rawDataContainer');
+            const rawDataDiv = document.getElementById('rawData');
+            const rawDataContent = document.getElementById('rawDataContent');
+            const errorContainer = document.getElementById('errorContainer');
+            const toggleRawDataBtn = document.getElementById('toggleRawData');
+            const searchHistorySection = document.getElementById('searchHistorySection');
+            const historyList = document.getElementById('historyList');
+            const clearHistoryBtn = document.getElementById('clearHistory');
+            const searchHistory = document.getElementById('searchHistory');
+
+            let searchHistoryData = JSON.parse(localStorage.getItem('marvelRivalsSearchHistory') || '[]');
+            updateHistoryUI();
+
+            playerNameInput.addEventListener('keydown', function (e) {
+                if (e.key === 'Enter') {
+                    lookupBtn.click();
+                }
+            });
+
+            lookupBtn.addEventListener('click', function () {
+                const playerName = playerNameInput.value.trim();
+                if (!playerName) {
+                    showError('Please enter a player name');
+                    return;
+                }
+
+                clearError();
+                loadingDiv.style.display = 'flex';
+                loadingDiv.style.flexDirection = 'column';
+                loadingDiv.style.alignItems = 'center';
+                peakTiersDiv.style.display = 'none';
+                lifetimePeakDiv.style.display = 'none';
+                rawDataContainer.style.display = 'none';
+                rawDataDiv.style.display = 'none';
+                resultsDiv.innerHTML = '';
+
+                addToSearchHistory(playerName);
+
+                const modalContainer = document.createElement('div');
+                modalContainer.style.cssText = 'position:fixed; top:0; left:0; width:100%; height:100%; z-index:9999; background:rgba(0,0,0,0.9); display:flex; flex-direction:column; align-items:center; justify-content:center;';
+
+                const instructions = document.createElement('div');
+                instructions.style.cssText = 'background:#1e1e1e; padding:20px; border-radius:8px; margin-bottom:15px; max-width:80%; text-align:center; box-shadow: 0 4px 8px rgba(0,0,0,0.4); color:#e0e0e0;';
+                instructions.innerHTML = `
+                    <h3 style="margin-top:0; color:#f0f0f0;">Data Extraction</h3>
+                    <div style="display:flex; align-items:start; margin:15px 0;">
+                        <div style="background:#252525; padding:15px; border-radius:6px; text-align:left; flex:1;">
+                            <p style="font-weight:bold; margin-top:0; color:#f0f0f0;">Steps:</p>
+                            <ol style="margin:0; padding-left:20px; color:#e0e0e0;">
+                                <li>Click inside the frame below</li>
+                                <li>Press Ctrl+A to select all text</li>
+                                <li>Press Ctrl+C to copy it</li>
+                                <li>Click the <strong style="color:#4CAF50;">"Process Data"</strong> button</li>
+                            </ol>
+                        </div>
+                    </div>
+                    <div style="display:flex; justify-content:center; gap:10px; margin-top:10px;">
+                        <button id="readClipboardBtn" tabindex="1" style="padding:10px 15px; background:#4CAF50; color:white; border:none; border-radius:4px; cursor:pointer; font-weight:bold;">Process Data</button>
+                        <button id="pasteBtn" tabindex="2" style="padding:10px 15px; background:#FF9800; color:white; border:none; border-radius:4px; cursor:pointer; font-weight:bold;">Manual Paste</button>
+                        <button id="cancelBtn" tabindex="3" style="padding:10px 15px; background:#f44336; color:white; border:none; border-radius:4px; cursor:pointer;">Cancel</button>
+                    </div>`;
+
+                const iframeContainer = document.createElement('div');
+                iframeContainer.style.cssText = 'width:60%; height:120px; border-radius:8px; overflow:hidden; box-shadow: 0 4px 8px rgba(0,0,0,0.4); position:relative;';
+
+                const loadingOverlay = document.createElement('div');
+                loadingOverlay.style.cssText = 'position:absolute; top:0; left:0; width:100%; height:100%; background:rgba(30,30,30,0.9); display:flex; align-items:center; justify-content:center; z-index:2;';
+                loadingOverlay.innerHTML = '<div style="text-align:center;"><div style="border:4px solid #333; border-top:4px solid #4CAF50; border-radius:50%; width:30px; height:30px; margin:0 auto 15px; animation:spin 1s linear infinite;"></div><p style="color:#e0e0e0;">Loading data...</p></div>';
+
+                const iframe = document.createElement('iframe');
+                iframe.style.cssText = 'width:100%; height:100%; border:none; background:#121212; color:#e0e0e0;';
+                iframe.setAttribute('tabindex', '0');
+
+                iframeContainer.appendChild(iframe);
+                iframeContainer.appendChild(loadingOverlay);
+                modalContainer.appendChild(instructions);
+                modalContainer.appendChild(iframeContainer);
+                document.body.appendChild(modalContainer);
+
+                iframe.src = `https://api.tracker.gg/api/v2/marvel-rivals/standard/profile/ign/${encodeURIComponent(playerName)}/segments/career?mode=competitive`;
+
+                iframe.onload = function () {
+                    loadingOverlay.remove();
+                    try {
+                        const iframeDoc = iframe.contentDocument || iframe.contentWindow.document;
+                        const style = iframeDoc.createElement('style');
+                        style.textContent = `
+                            body { background-color: #121212 !important; color: #e0e0e0 !important; }
+                            pre { background-color: #1e1e1e !important; color: #e0e0e0 !important; }
+                        `;
+                        iframeDoc.head.appendChild(style);
+                    } catch (e) { }
+
+                    iframe.focus();
+                };
+
+                document.getElementById('readClipboardBtn').addEventListener('click', async function () {
+                    try {
+                        const clipboardText = await navigator.clipboard.readText();
+
+                        try {
+                            const data = JSON.parse(clipboardText);
+                            processData(data);
+                            document.body.removeChild(modalContainer);
+                        } catch (err) {
+                            showError('Invalid JSON data in clipboard. Please make sure you copied the API response correctly.');
+                        }
+                    } catch (error) {
+                        showError('Unable to read from clipboard. Please use the manual paste option instead.');
+                        document.getElementById('pasteBtn').click();
+                    }
+                });
+
+                document.getElementById('pasteBtn').addEventListener('click', function () {
+                    instructions.innerHTML = `
+                        <h3 style="margin-top:0; color:#f0f0f0;">Paste JSON Data</h3>
+                        <p style="margin-bottom:15px; color:#e0e0e0;">Copy the data from the frame below (Ctrl+A, then Ctrl+C) and paste it here:</p>
+                        <textarea id="jsonTextarea" style="width:100%; height:120px; padding:10px; border:1px solid #444; border-radius:4px; margin-bottom:15px; font-family:monospace; background:#252525; color:#e0e0e0;" 
+                            placeholder="Paste the JSON data here (Ctrl+V)" tabindex="1"></textarea>
+                        <div style="display:flex; justify-content:center; gap:10px;">
+                            <button id="submitPastedData" tabindex="2" style="padding:10px 20px; background:#4CAF50; color:white; border:none; border-radius:4px; cursor:pointer; font-weight:bold;">Process Data</button>
+                            <button id="cancelPaste" tabindex="3" style="padding:10px 20px; background:#f44336; color:white; border:none; border-radius:4px; cursor:pointer;">Cancel</button>
+                        </div>
+                    `;
+
+                    setTimeout(() => {
+                        const textarea = document.getElementById('jsonTextarea');
+                        if (textarea) textarea.focus();
+                    }, 100);
+
+                    document.getElementById('submitPastedData')?.addEventListener('click', function () {
+                        const textarea = document.getElementById('jsonTextarea');
+                        try {
+                            const data = JSON.parse(textarea.value);
+                            processData(data);
+                            document.body.removeChild(modalContainer);
+                        } catch (err) {
+                            showError('Invalid JSON data. Please make sure you copied all the text correctly.');
+                        }
+                    });
+
+                    document.getElementById('cancelPaste')?.addEventListener('click', function () {
+                        document.body.removeChild(modalContainer);
+                        loadingDiv.style.display = 'none';
+                    });
+                });
+
+                document.getElementById('cancelBtn').addEventListener('click', function () {
+                    document.body.removeChild(modalContainer);
+                    loadingDiv.style.display = 'none';
+                });
+
+                setTimeout(() => {
+                    if (document.body.contains(modalContainer)) {
+                        document.body.removeChild(modalContainer);
+                        loadingDiv.style.display = 'none';
+                        showError('The operation timed out. Please try again.');
+                    }
+                }, 60000);
+            });
+
+            toggleRawDataBtn.addEventListener('click', function () {
+                if (rawDataDiv.style.display === 'none') {
+                    rawDataDiv.style.display = 'block';
+                    toggleRawDataBtn.textContent = 'Hide';
+                } else {
+                    rawDataDiv.style.display = 'none';
+                    toggleRawDataBtn.textContent = 'Show';
+                }
+            });
+
+            clearHistoryBtn.addEventListener('click', function () {
+                if (confirm('Are you sure you want to clear your search history?')) {
+                    searchHistoryData = [];
+                    localStorage.setItem('marvelRivalsSearchHistory', JSON.stringify(searchHistoryData));
+                    updateHistoryUI();
+                }
+            });
+
+            function processData(data) {
+                resultsDiv.innerHTML = '<h2>Results for ' + playerNameInput.value + '</h2>';
+                loadingDiv.style.display = 'none';
+
+                try {
+                    // Check for private profile error
+                    if (data.errors && data.errors.some(err => err.code === "CollectorResultStatus::Private")) {
+                        resultsDiv.innerHTML = `
+                <div class="card">
+                    <h3 style="color:#FF9800;">Private Profile</h3>
+                    <p>This player has set their profile to private. Stats cannot be displayed.</p>
+                </div>
+            `;
+
+                        // Still show raw data section
+                        rawDataContent.textContent = JSON.stringify(data, null, 2);
+                        rawDataContainer.style.display = 'block';
+                        return;
+                    }
+
+                    // Check for player not found error
+                    if (data.errors && data.errors.some(err => err.code === "CollectorResultStatus::NotFound")) {
+                        resultsDiv.innerHTML = `
+                <div class="card">
+                    <h3 style="color:#FF9800;">Player Not Found</h3>
+                    <p>We couldn't find a player with this name. Please check the spelling and try again.</p>
+                </div>
+            `;
+
+                        // Still show raw data section
+                        rawDataContent.textContent = JSON.stringify(data, null, 2);
+                        rawDataContainer.style.display = 'block';
+                        return;
+                    }
+
+                    if (!data.data || !data.data["1"]) {
+                        throw new Error('Player not found or no competitive data available');
+                    }
+
+                    const peakTiers = data.data["1"].stats.peakTiers.value;
+                    const lifetimePeak = data.data["1"].stats.lifetimePeakRanked;
+
+                    let peakTiersHtml = '';
+                    peakTiers.forEach(peak => {
+                        peakTiersHtml += `
+                <div class="tier" style="border-left: 4px solid ${peak.metadata.color || '#ccc'}; padding-left: 10px;">
+                    <img src="${peak.metadata.iconUrl}" alt="${peak.metadata.tierName}" loading="lazy" onerror="this.src='data:image/svg+xml,<svg xmlns=%22http://www.w3.org/2000/svg%22 viewBox=%220 0 100 100%22><text y=%22.9em%22 font-size=%2270%22>🏆</text></svg>'">
+                    <div>
+                        <strong>${peak.metadata.seasonName}</strong><br>
+                        ${peak.metadata.tierName} (${peak.metadata.tierShortName})<br>
+                        Rating: ${Math.round(peak.value)}
+                    </div>
+                </div>
+            `;
+                    });
+                    document.getElementById('peakTiersContent').innerHTML = peakTiersHtml;
+                    peakTiersDiv.style.display = 'block';
+
+                    document.getElementById('lifetimePeakContent').innerHTML = `
+            <div class="tier" style="border-left: 4px solid ${lifetimePeak.metadata.color || '#ccc'}; padding-left: 10px;">
+                <img src="${lifetimePeak.metadata.iconUrl}" alt="${lifetimePeak.metadata.tierName}" loading="lazy" onerror="this.src='data:image/svg+xml,<svg xmlns=%22http://www.w3.org/2000/svg%22 viewBox=%220 0 100 100%22><text y=%22.9em%22 font-size=%2270%22>🏆</text></svg>'">
+                <div>
+                    <strong>${lifetimePeak.displayName}</strong><br>
+                    ${lifetimePeak.metadata.tierName} (${lifetimePeak.metadata.tierShortName})<br>
+                    Rating: ${lifetimePeak.displayValue}
+                </div>
+            </div>
+        `;
+                    lifetimePeakDiv.style.display = 'block';
+
+                    rawDataContent.textContent = JSON.stringify(data, null, 2);
+                    rawDataContainer.style.display = 'block';
+                } catch (error) {
+                    showError(`Error: ${error.message}`);
+                }
+            }
+
+            function showError(message) {
+                errorContainer.innerHTML = `
+                    <div class="error-message">
+                        <strong>Error:</strong> ${message}
+                    </div>
+                `;
+                loadingDiv.style.display = 'none';
+            }
+
+            function clearError() {
+                errorContainer.innerHTML = '';
+            }
+
+            function addToSearchHistory(playerName) {
+                const index = searchHistoryData.indexOf(playerName);
+                if (index > -1) {
+                    searchHistoryData.splice(index, 1);
+                }
+
+                searchHistoryData.unshift(playerName);
+
+                if (searchHistoryData.length > 10) {
+                    searchHistoryData.pop();
+                }
+
+                localStorage.setItem('marvelRivalsSearchHistory', JSON.stringify(searchHistoryData));
+                updateHistoryUI();
+            }
+
+            function updateHistoryUI() {
+                searchHistory.innerHTML = '';
+                searchHistoryData.forEach(name => {
+                    const option = document.createElement('option');
+                    option.value = name;
+                    searchHistory.appendChild(option);
+                });
+
+                if (searchHistoryData.length > 0) {
+                    historyList.innerHTML = '';
+                    searchHistoryData.forEach(name => {
+                        const historyItem = document.createElement('div');
+                        historyItem.className = 'history-item';
+                        historyItem.innerHTML = `
+                            <span>${name}</span>
+                            <button class="toggle-btn search-again">Search</button>
+                        `;
+                        historyItem.querySelector('.search-again').addEventListener('click', function () {
+                            playerNameInput.value = name;
+                            lookupBtn.click();
+                        });
+                        historyList.appendChild(historyItem);
+                    });
+                    searchHistorySection.style.display = 'block';
+                } else {
+                    searchHistorySection.style.display = 'none';
+                }
+            }
+
+            window.addEventListener('keydown', function (e) {
+                if (e.key === 'Escape') {
+                    const modalContainer = document.querySelector('body > div[style*="position:fixed"]');
+                    if (modalContainer) {
+                        document.body.removeChild(modalContainer);
+                        loadingDiv.style.display = 'none';
+                    }
+                }
+            });
+        });
+    </script>
+</body>
+
+</html>
