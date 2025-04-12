@@ -129,10 +129,7 @@
             border-radius: 8px;
             transition: transform 0.2s ease;
             box-shadow: 0 2px 4px rgba(0, 0, 0, 0.2);
-        }
-
-        .tier:hover {
-            transform: translateY(-2px);
+            width: 100%;
         }
 
         .tier:last-child {
@@ -190,6 +187,79 @@
             overflow-y: auto;
             padding-right: 5px;
             scrollbar-width: thin;
+            padding-right: 8px;
+            overscroll-behavior: contain;
+        }
+
+        .scrollable-heroes::-webkit-scrollbar {
+            width: 8px;
+        }
+
+        .scrollable-heroes::-webkit-scrollbar-track {
+            background: var(--card-background);
+        }
+
+        .scrollable-heroes::-webkit-scrollbar-thumb {
+            background: #555;
+            border-radius: 5px;
+        }
+
+        .hero-info-container {
+            display: flex;
+            flex-direction: column;
+            flex-grow: 1;
+            min-width: 0;
+            overflow: hidden;
+            width: calc(100% - 100px);
+        }
+
+        .hero-name-role {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            width: 100%;
+            margin-bottom: 4px;
+        }
+
+        .hero-name {
+            font-weight: bold;
+            overflow: hidden;
+            text-overflow: ellipsis;
+            white-space: nowrap;
+            color: var(--heading-color);
+            font-size: 1em;
+            flex: 1;
+        }
+
+        .hero-role {
+            color: #ccc;
+            font-size: 0.85em;
+            white-space: nowrap;
+            margin-left: 5px;
+        }
+
+        .hero-stats {
+            display: flex;
+            justify-content: space-between;
+            margin-top: 4px;
+            font-size: 0.9em;
+        }
+
+        .hero-matches {
+            display: flex;
+            justify-content: space-between;
+            margin-top: 3px;
+            color: #aaa;
+            font-size: 0.8em;
+        }
+
+        .hero-kda {
+            white-space: nowrap;
+            font-weight: bold;
+            font-size: 0.9em;
+            margin-left: 5px;
+            text-align: right;
+            min-width: 55px;
         }
 
         .stat-box {
@@ -783,21 +853,22 @@
                                 heroCard.innerHTML = `
                                     <img src="${heroImage}" alt="${heroName}" loading="lazy" 
                                         onerror="this.src='data:image/svg+xml,<svg xmlns=%22http://www.w3.org/2000/svg%22 viewBox=%220 0 100 100%22><text y=%22.9em%22 font-size=%2270%22>🦸</text></svg>'">
-                                    <div style="display: flex; flex-direction: column; flex-grow: 1;">
-                                        <div style="display: flex; justify-content: space-between; align-items: center;">
-                                            <strong>${heroName}</strong>
-                                            <span style="color: #ccc; font-size: 0.9em;">${heroRole}</span>
+                                    <div class="hero-info-container">
+                                        <div class="hero-name-role">
+                                            <span class="hero-name">${heroName}</span>
+                                            <span class="hero-role">${heroRole}</span>
                                         </div>
-                                        <div style="display: flex; justify-content: space-between; margin-top: 5px;">
-                                            <span>Time Played: ${timePlayed}</span>
-                                            <span>Win Rate: ${winRate}</span>
+                                        <div class="hero-stats">
+                                            <span>Time: ${timePlayed}</span>
+                                            <span>WR: ${winRate}</span>
                                         </div>
-                                        <div style="display: flex; justify-content: space-between; margin-top: 5px; color: #aaa; font-size: 0.9em;">
-                                            <span>${matchesPlayed} Matches</span>
-                                            <span>${matchesWon} Wins</span>
+                                        <div class="hero-matches">
+                                            <span>${matchesPlayed} M, ${matchesWon} W</span>
                                         </div>
                                     </div>
-                                    <div style="color: ${kdaColor}; font-weight: bold; font-size: 1em; text-align: right;">KDA: ${kdaRatio.toFixed(2)}</div>
+                                    <div class="hero-kda" style="color: ${kdaColor};">
+                                        KDA<br>${kdaRatio.toFixed(2)}
+                                    </div>
                                 `;
                                 
                                 topHeroesContent.appendChild(heroCard);
