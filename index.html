@@ -317,6 +317,29 @@
 
     <div id="errorContainer"></div>
     <div id="results"></div>
+    <div id="playerStats" class="card" style="display: none;">
+        <h2>All-Time Player Stats</h2>
+        <div id="playerStatsContent">
+            <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(150px, 1fr)); gap: 15px;">
+                <div class="stat-box">
+                    <div class="stat-label">Time Played (Competitive)</div>
+                    <div class="stat-value" id="timePlayed">--</div>
+                </div>
+                <div class="stat-box">
+                    <div class="stat-label">Matches Played</div>
+                    <div class="stat-value" id="matchesPlayed">--</div>
+                </div>
+                <div class="stat-box">
+                    <div class="stat-label">Matches Won</div>
+                    <div class="stat-value" id="matchesWon">--</div>
+                </div>
+                <div class="stat-box">
+                    <div class="stat-label">Win Rate</div>
+                    <div class="stat-value" id="winRate">--</div>
+                </div>
+            </div>
+        </div>
+    </div>
     <div id="peakTiers" class="card" style="display: none;">
         <h2>Peak Tiers</h2>
         <div id="peakTiersContent"></div>
@@ -583,6 +606,44 @@
 
                     if (!data.data || !data.data["1"]) {
                         throw new Error('Player not found or no competitive data available');
+                    }
+
+                    // Extract player stats
+                    const playerStats = document.getElementById('playerStats');
+                    const timePlayedEl = document.getElementById('timePlayed');
+                    const matchesPlayedEl = document.getElementById('matchesPlayed');
+                    const matchesWonEl = document.getElementById('matchesWon');
+                    const winRateEl = document.getElementById('winRate');
+
+                    // Parse stats from data
+                    if (data.data[0] && data.data[0].stats) {
+                        const stats = data.data[0].stats;
+                        
+                        // Time played
+                        if (stats.timePlayed) {
+                            timePlayedEl.textContent = stats.timePlayed.displayValue || '--';
+                        }
+                        
+                        // Matches played
+                        if (stats.matchesPlayed) {
+                            matchesPlayedEl.textContent = stats.matchesPlayed.value || '--';
+                        }
+                        
+                        // Matches won
+                        if (stats.matchesWon) {
+                            matchesWonEl.textContent = stats.matchesWon.value || '--';
+                        }
+                        
+                        // Win percentage
+                        if (stats.matchesWinPct) {
+                            winRateEl.textContent = stats.matchesWinPct.displayValue || '--';
+                        } else if (stats.matchesPlayed && stats.matchesPlayed.value > 0 && stats.matchesWon) {
+                            // Calculate win rate if not provided directly
+                            const winRate = ((stats.matchesWon.value / stats.matchesPlayed.value) * 100).toFixed(1);
+                            winRateEl.textContent = `${winRate}%`;
+                        }
+                        
+                        playerStats.style.display = 'block';
                     }
 
                     const peakTiers = data.data["1"].stats.peakTiers.value;
